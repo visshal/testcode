@@ -16,8 +16,14 @@
 #
 # Author:
 # Vishal Mehta
+#
+# Known Bug:
+# 'rm -f filename' always returns true, hence verification of this command,
+# should be done by 'ls filename'.
 ############################################################################
 
+# Array that holds processes.
+file_arr=[]
 # Array that holds processes.
 proc_arr=[]
 # Scalar variable that keeps count of bg processes.
@@ -27,25 +33,24 @@ for file in `ls`
 do
    echo $file
    # Running bg command.
-   a=`file $file &`
-   sleep 10 &
+   a=`tar -zxvf $file &`
    proc_arr[$proc_count]=$!
+   file_arr[$proc_count]=$file
    proc_count=`expr $proc_count + 1`
    echo $a
 done
-
-kill ${proc_arr[5]}
-echo $proc_count
 
 for (( i=0; i<proc_count; i++ ))
 do
    echo ${proc_arr[$i]}
    # Waiting for each bg process to complete.
-   if wait ${proc_arr[$i]}
+   if wait ${proc_arr[$i]} && `rm -f ${file_arr[$i]}`
    then
-     echo "hurray we passed."
+     echo "Hurray we passed."
    else
-     echo "That failed :("
+     echo "That failed :(."
+     exit 1
    fi
    echo $ret
 done
+exit 0
