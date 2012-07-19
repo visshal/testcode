@@ -1,0 +1,123 @@
+(4) Remote Linux server use
+
+    What do SSH keys enable one to do?
+    How does one obtain/create an SSH key?
+    How does one install an SSH key to make it useful on the
+        local machine?
+    How does one install an SSH key to make it useful on remote machine?
+
+As per above question one needs to execute remote command via ssh without entering password. In order to achieve that one needs to make sure following settings. (we have two machines 1. rocker 2. charlie)
+1. Generate public host key on machine 'tango' by using command (ssh-keygen -t rsa). (give appropriate values but no password.)
+vishal@rocker:~/inktank$ ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/vishal/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase):  
+Your identification has been saved in /home/vishal/.ssh/id_rsa.
+Your public key has been saved in /home/vishal/.ssh/id_rsa.pub.
+The key fingerprint is:
+ec:45:e5:5b:40:26:d2:6d:a6:7a:f0:0b:34:59:55:ea vishal@rocker
+The key's randomart image is:
++--[ RSA 2048]----+
+|        ...+*..  |
+|         .o=+o   |
+|         o.+o .  |
+|       .=... o   |
+|       .S=. E    |
+|       .o.o      |
+|        .o .     |
+|          .      |
+|                 |
++-----------------+
+
+2. We have public and private key isn id_rsa.pub and id_rsa file respectively.
+
+3. Now we copy host key to the machine 2 that is 'charlie'.
+scp /home/vishal/.ssh/id_rsa.pub root@charlie:~/.ssh/authorized_keys
+
+4. After performing above step, we will have password-less ssh session to remote computer.
+
+
+(5) Basic Linux administration
+
+  You just ran a 'service foobar start', and got no error messages, but the service doesn't seem to be working.
+  What probably happened?
+  What would be the first steps you took to troubleshoot the problem?
+  Under what circumstances would you expect to see errors at service start time?
+
+Answers:
+Probably somehow service gets killed/stopped as soon as it gets started due to some trap or signals.
+Or the service might need special permission to get started.
+First steps to troubleshoot.
+1. Look at the log file in /var/log/messages or systemlog or if a separate process log for 'foobar' gets createds.
+2. Reading/Debugging the service script file in /etc/xinetd.d or in location to where it is registered from.
+   Above step would give us an idea how service gets started, is there any dependency involved for that service to start.
+3. Make use of netstat command to see the port requested by 'foobar' is not occupied any other process.
+Under what circumstances would you expect to see errors at service start time?
+1. When service isn't registered.
+2. When service isn't recognized.
+3. When resources (memory, processor) required by services are not available
+
+(6) Testing distributed systems
+
+    Describe how you would, in a fully automated test suite,
+    with no special hardware (like remote power controllers),
+    simulate the following failures:
+    (a) a critical service daemon aborting
+    (b) the failure of a service-providing node
+    (c) a complete failure of a switch or NIC
+    (d) a complete failure of a disk which has been mounted
+        as a file system (and what sorts of behavior would
+        this not faithfully model)
+    (e) intermittent unrecoverable disk read/write errors
+        (and what sorts of behavior would this not faithfully model)
+
+Answers:
+a. 1. Get the process id by executing either of following command.
+      ps aux | grep -i 'processname'
+      netstat -plnt | grep -i 'processname'
+   2. Use kill command with -9 (forcefully) to kill the process.
+      kill -9 <processID>
+
+b. Use shutdown -now or init 0 or init 1.
+
+c. Use either of following command.
+   1. ifdown <interface> or ifdown -a
+   2. if_mpadm -d <interface>
+
+d. Use of dd command in following way or mdadm command.
+   dd if=/dev/zero of=<diskpath> count=50 or mdadm -f <diskpath>
+   Disk path cound be /dev/sd*
+
+e. We can inject faults while i/o to/from disk is in progress.
+   Reference: http://www.kernel.org/doc/Documentation/fault-injection/fault-injection.txt
+
+
+(7) Trouble shooting
+
+    Describe what information you would gather, and what tools
+    you would use to perform a preliminary investigation of the
+    following failures:
+
+        a new testing script gets an unexpected error code from a
+        standard linux command
+> In such situation I would first look at how commad has been executed (on background or foreground)
+> Are the parameters provided correctly?
+> Is the user executing command has appropriate rights on the command?
+> Is command located in /usr/bin or /sbin/ or /usr/local/bin directory or it is defined in PATH variable?
+
+        a process is unable to connect to an important network server
+> Is network server up and running?
+> Is process having correct network route to important network server?
+> Is network port (to which a process is trying to connect) open?
+> Is network port free (not used by any other process) on network server?
+> Is process trying to connect to correct network server (checking IP, socket-type etc.)
+> Is network is out of resources?
+
+        a critical service daemon core-dumps
+> Upon cored dump, use of gdb tool becomes important.
+> I would first find out the path of the service daemon using strings command (only if path is unknown.)
+> Then use gdb <processpath> <coredumppath>
+> Will use 'bt' command on gdb console & try to get backtrace, also upon getting bt output, will try to learn where is the error.
+> Consult developer/development manager with bt trace + how in which conditions service daemon cored dump.
+
+
