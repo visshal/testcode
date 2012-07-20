@@ -1,17 +1,20 @@
 #!/usr/bin/perl
 #
 #
-# @brief This script takes line(s) from stdin and prints count of total 
-#        chars, words and lines on stdout.
+# @brief This script takes line(s) from stdin and prints count of total
+# chars, words and lines on stdout.
 #
 # @date 07/18/2012 10:42:43
-# 
-# @note Part of Inktank Interview Questions.
+#
+# @note In order to run this program you need 'String' perl module, which
+#       is part of this package.
 #
 # @author Vishal Mehta
 
 use strict;
 use warnings;
+
+use String;
 
 BEGIN {
  if (scalar @ARGV != 1) {
@@ -19,14 +22,10 @@ BEGIN {
     print "Usage: .\\$0 <\"String\">" . "\n";
     exit(1);
   }
-
-  my $string = $ARGV[0];
-
-  my $lines = scalar(split("\n",$string));
-  my $words = scalar(split(/\s+/, $string));
-  my $chars = scalar(split(/\w/, $string));
-
-  print "Lines are :: " . $lines ."\n";
-  print "Words are :: " . $words . "\n";
-  print "Chars are :: " . $chars . "\n";
+  
+  my $string = String->new($ARGV[0]);
+ 
+  print "Line count :: " . $string->line_count() ."\n";
+  print "Word count :: " . $string->word_count() . "\n";
+  print "Char count :: " . $string->char_count() . "\n";
 }
