@@ -17,15 +17,14 @@ use warnings;
 use String;
 
 BEGIN {
- if (scalar @ARGV != 1) {
-    print "Counts characters, words and lines from paragraph.\n";
-    print "Usage: .\\$0 <\"String\">" . "\n";
-    exit(1);
+  printf("Please enter a string (CTRL+D to stop):");
+  my $str = '';
+  while (<STDIN>) {
+     $str .= $_;
   }
-  
-  my $string = String->new($ARGV[0]);
- 
-  print "Line count :: " . $string->line_count() ."\n";
-  print "Word count :: " . $string->word_count() . "\n";
-  print "Char count :: " . $string->char_count() . "\n";
+  my $string = String->new($str);
+  print "\n";
+  printf("Line count :: %d \n",$string->line_count());
+  printf("Word count :: %d \n",$string->word_count());
+  printf("Char count :: %d \n",$string->char_count());
 }
