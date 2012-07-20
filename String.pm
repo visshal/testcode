@@ -1,7 +1,9 @@
 #!/usr/bin/perl
-use Carp qw/croak/;
 use strict;
 use warnings;
+
+use Carp qw/croak/;
+
 require Exporter;
 my @ISA = qw/Exporter/;
 
@@ -24,7 +26,6 @@ sub line_count {
    if (defined($self->{_string})) {
      return scalar(split(/\n+/,$self->{_string}));
    } else {
-     use Carp qw/croak/;
      croak("Uninitalized string object.");
    }
 }
@@ -34,7 +35,6 @@ sub word_count {
    if (defined($self->{_string})) {
       return scalar(split('\s+', $self->{_string}));
    } else {
-     use Carp qw/croak/;
      croak("Uninitalized string object.");
    }
 
@@ -43,9 +43,10 @@ sub word_count {
 sub char_count {
    my ($self) = @_;
    if (defined($self->{_string})) {
-      return scalar(split('', $self->{_string}));
+      my $str = $self->{_string};
+      $str =~ s/\n+//g;
+      return scalar(split('', $str));
    } else {
-     use Carp qw/croak/;
      croak("Uninitalized string object.");
    }
 }
