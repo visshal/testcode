@@ -39,10 +39,6 @@ untar()
     c=`expr $c + 1`
   done
 
-  echo ${procarr[0]}
-  echo ${procarr[1]}
-  echo ${procarr[2]}
-  
   # Wait for bg processes to be run.
   for (( i=0; i<=c; i++ ))
   do
