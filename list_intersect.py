@@ -7,6 +7,18 @@
 # @note Part of Inktank Interview Questions.
 #
 # @author Vishal Mehta
+#
+# @Example run:  
+# vishal@rocker:~/inktank/inktank_repo$ python list_intersect.py 
+# This code gives common elements from given two lists. 
+# Enter digits separated by spaces. 
+# Enter first list:1 2 3 4
+# Enter second list:3 4 5 6
+# [3, 4]
+#
+
+
+import sys;
 
 def intersect(list1, list2):
    common_list = [];
@@ -15,11 +27,23 @@ def intersect(list1, list2):
          common_list.append(item);
    return common_list;
 
+print "This code gives common elements from given two lists.";
+print "Enter digits separated by spaces.";
 
-l1 = [8,3,4,5,1,9,7];
-l2 = [1,2,3,4];
+# Array initialization.
+list1 = [];
+list2 = [];
 
-print intersect(l1,l2);
+input1 = raw_input("Enter first list:");
+list1  = map(int, input1.split());
+input2 = raw_input("Enter second list:");
+list2  = map(int, input2.split());
+
+# Checking for empty-ness of arrays.
+if list1 and list2:
+   print intersect(list1,list2);
+else:
+   print "Empty array(s) detected.";
 
 #####
 # Test scenarios.
